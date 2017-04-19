@@ -1,5 +1,6 @@
 #Create a file named config.js inside config with the following data
 ```
+
 exports.CSV_FILE = ;
 exports.GMAIL_USER = ;
 exports.CLIENT_ID = ;
