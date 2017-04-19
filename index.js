@@ -4,6 +4,7 @@ var fs = require('fs');
 var config = require('./config/config');
 var mail = require('./config/config_mail');
 var ProgressBar = require('progress');
+const uuidV1 = require('uuid/v1');
 
 const bar = new ProgressBar('  downloading [:bar] :percent :etas', { total: 1 });
 
@@ -27,13 +28,18 @@ const generate_new_mail_opts = ({ email, name, title }) => ({
     attachments: config.attachments
 });        
 
+const ERRORS = [];
+const RESPONSES = []
+
 function send_mail(customMailOptions, customTransporter) {
     customTransporter.sendMail(customMailOptions, (error, response) => {
         if (error) {
-            console.log(error)
-            client.rpush("mailer_errors_v2_test", JSON.stringify(error));
+            console.log(error);
+            // client.rpush("mailer_errors_v2_test", JSON.stringify(error));
+            ERRORS.push(error);
         } else {
-            client.rpush("mailer_responses_v2_test", JSON.stringify(response));
+            RESPONSES.push(response);
+            // client.rpush("mailer_responses_v2_test", JSON.stringify(response));
         }
         bar.tick();
         smtpTransport.close();
@@ -51,7 +57,8 @@ parse(csv_file, {columns: true, delimiter: ','}, (err, output) => {
 const finish = () => {
     if (bar.complete) {
         console.log('\ncomplete\n');
-        client.quit()
+        const data = JSON.stringify({ERRORS, RESPONSES})
+        fs.writeFileSync(`mailer_data${uuidV1()}.json`, data);
         return
     }
     setTimeout(finish, 2000)
