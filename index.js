@@ -2,9 +2,8 @@ var parse = require('csv-parse');
 var nodemailer = require("nodemailer");
 var fs = require('fs');
 var config = require('./config/config');
+var mail = require('./config/config_mail');
 var ProgressBar = require('progress');
-var redis = require("redis"),
-    client = redis.createClient();
 
 const bar = new ProgressBar('  downloading [:bar] :percent :etas', { total: 1 });
 
@@ -23,8 +22,8 @@ let transporter = nodemailer.createTransport({
 const generate_new_mail_opts = ({ email, name, title }) => ({
     from: config.GMAIL_USER,
     to: email,
-    subject: config.genMailSubject(name, title),
-    text: config.genMailTxtBody(name, title),
+    subject: mail.genMailSubject(name, title),
+    html: mail.genMailHtmlBody(name, title),
     attachments: config.attachments
 });        
 
