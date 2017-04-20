@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "recommended/esnext",
+    "recommended/esnext/style-guide",
+    "recommended/node",
+    "recommended/node/style-guide",
+  ],
+"rules": {
+"indent": [2, 4],
+"import/no-commonjs": 0,
+"semi": 0,
+"import/no-nodejs-modules": 0,
+"curly": 0,
+},
+"env": {
+"node": true
+}
+}

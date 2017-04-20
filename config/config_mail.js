@@ -17,7 +17,7 @@ Je reste à votre disposition pour tout complément d'information ou rendez-vous
 exports.genMailHtmlBody = (name, title) => `
 <p>${title} le Maire,</p>
 <p>
-Je me permets de vous contacter à nouveau en tant que fondateur de Dartagnans.fr, la première plateforme française de financement participatif dédiée au rayonnement et à la préservation du patrimoine culturel.
+Je me permets de vous contacter en tant que fondateur de Dartagnans.fr, la première plateforme française de financement participatif dédiée au rayonnement et à la préservation du patrimoine culturel.
 </p>
  <p>
 Depuis son lancement en septembre 2015, Dartagnans a eu la chance d'accompagner 95 porteurs de projets pour plus de 700 000€ de dons collectés.
@@ -26,12 +26,19 @@ Depuis son lancement en septembre 2015, Dartagnans a eu la chance d'accompagner 
 Je souhaiterais vous proposer d'échanger sur les synergies que nous pourrions créer ensemble, et vous présenter plus en détail les services d'accompagnement sur-mesure proposés par Dartagnans et notre impact sur le patrimoine et le mécénat en France.
 </p>
  <p>
-En effet, Dartagnans est identifié comme une startup qui transforme l'image du patrimoine et du mécénat, avec plus de 2 millions de personnes atteintes chaque mois sur Facebook. Cela permet à nos porteurs de projets de toucher un nouveau public comme les jeunes et les citoyens en quête d'expériences culturelles.</p>
+En effet, Dartagnans est identifié comme une startup qui transforme l'image du patrimoine et du mécénat, avec plus de 2 millions de personnes atteintes chaque mois sur Facebook. Notre approche permet à nos porteurs de projets de toucher un nouveau public comme les jeunes et les citoyens en quête d'expériences culturelles.</p>
  <p>
 Nous attachons beaucoup d'importance à faire de nos campagnes de véritables opérations de communication au-delà de la levée de fonds.
 </p>
 <p>
 Je reste à votre disposition pour tout complément d'information ou rendez-vous que vous voudriez bien m'accorder, et je vous prie de croire, ${title} le Maire, en l'expression de ma respectueuse considération.
+
+<p>Notre site internet : https://dartagnans.fr/</p>
+
+<p>Notre page Facebook : https://www.facebook.com/DartagnansFR</p>
+
+<p>Notre plaquette de présentation :  <a href="https://dartagnans.fr/assets/Dartagnans_x_Collectivité_Territoriale-f5a2fe38ce0accdd92e7188d6a9adf15f5a8868751b837b72fe47cda7caefe76.pdf" target="_blank"> https://dartagnans.fr/assets/Dartagnans_x_Collectivité_Territoriale.pdf</a></p>
+
 </p>
 <div>
     <div class="gmail_signature">

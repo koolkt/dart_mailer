@@ -1,18 +1,30 @@
 {
   "name": "dartagnans_mailer",
   "version": "1.0.0",
-  "description": "",
+  "description": "```",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koolkt/dart_mailer.git"
+  },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/koolkt/dart_mailer/issues"
+  },
+  "homepage": "https://github.com/koolkt/dart_mailer#readme",
   "dependencies": {
-    "csv": "^1.1.1",
+    "bluebird": "^3.5.0",
+    "csv-parse": "^1.2.0",
+    "debug": "^2.6.3",
+    "moment": "^2.18.1",
     "nodemailer": "^4.0.1",
-    "progress": "^2.0.0",
-    "redis": "^2.7.1",
-    "uuid": "^3.0.1"
+    "redis": "^2.7.1"
+  },
+  "devDependencies": {
+    "eslint-config-recommended": "^1.5.0"
   }
 }
