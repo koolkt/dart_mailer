@@ -69,8 +69,8 @@ async function processMails () {
             r = await sendMailAsync(generateNewMailOpts(JSON.parse(mailData)), transporter);
             debug(r);
         } catch (e) {
+            debug(e);
             await timeout(60000);
-            debug(e)
             return;
         }
         try {
@@ -104,7 +104,3 @@ async function init () {
 }
 
 transporter.on('idle', init);
-// client.rpush("mailer_errors_v2_test", JSON.stringify(error));
-// client.rpush("mailer_responses_v2_test", JSON.stringify(response));
-/* sendMail(generateNewMailOpts(person), transporter)*/
-/* redisClient.quit();*/
