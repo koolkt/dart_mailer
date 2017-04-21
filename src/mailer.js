@@ -69,15 +69,18 @@ async function processMails () {
             r = await sendMailAsync(generateNewMailOpts(JSON.parse(mailData)), transporter);
             debug(r);
         } catch (e) {
+            await redisClient.lpushAsync(WORK_QUEUE, mailData);
+            await redisClient.lremAsync(PROCESSING_QUEUE, 0, mailData);
             debug(e);
+            debug('Sleeping for 1min due to error...')
             await timeout(60000);
             return;
         }
         try {
-            await redisClient.lpopAsync(PROCESSING_QUEUE);
+            await redisClient.lremAsync(PROCESSING_QUEUE, 0, mailData);
             await redisClient.incrAsync(MAILS_SENT_TODAY_QUEUE);
         } catch (e) {
-            await redisClient.lpopAsync(PROCESSING_QUEUE);
+            await redisClient.lremAsync(PROCESSING_QUEUE, 0, mailData);
             await redisClient.incrAsync(MAILS_SENT_TODAY_QUEUE);
             debug(e);
         }
@@ -92,7 +95,6 @@ async function init () {
         await redisClient.setAsync(MAILS_SENT_TODAY_QUEUE, 0);
     }
     while (transporter.isIdle() && await redisClient.llenAsync(WORK_QUEUE) && await redisClient.getAsync(MAILS_SENT_TODAY_QUEUE) < MAX_MAILS_PER_DAY) {
-        await timeout(500);
         await processMails();
     }
     const qlen = await redisClient.llenAsync(WORK_QUEUE);
