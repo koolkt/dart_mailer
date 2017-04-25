@@ -3,12 +3,33 @@ const nodemailer = require('nodemailer');
 const redis = require('redis');
 const moment = require('moment');
 const debug = require('debug')('debug:mail_client');
-const config = require('../config/config');
-const mail = require('../config/config_mail');
+const config = require('../config/config').config;
+const mailRomain = require('../config/config_mail_romain');
+const mailBastien = require('../config/config_mail_bastien');
 
-const WORK_QUEUE = `marie_work_queue_${ config.GMAIL_USER }`;
-const PROCESSING_QUEUE = `marie_processing_queue_${ process.env.CLIENT_NAME || config.GMAIL_USER }`;
-const MAX_MAILS_PER_DAY = 1500;
+const TEST = process.env.TEST;
+const USER = process.env.USER;
+
+const mailConfs = {
+    romain: mailRomain,
+    bastien: mailBastien,
+};
+const mail = mailConfs[USER];
+if (!TEST) {
+    console.log('Running in production mode')
+}
+if (!USER) {
+    console.log('env variable USER is not set!');
+    process.exit();
+}
+if(!mail) {
+    console.log('User conf not found');
+    process.exit();
+}
+
+const WORK_QUEUE = TEST ? 'mailer_test_work_queue' : `marie_work_queue_${ config[USER].gmailUser }`;
+const PROCESSING_QUEUE = TEST ? 'mailer_test_processing_queue' : `marie_processing_queue_${ process.env.CLIENT_NAME || config[USER].gmailUser }`;
+const MAX_MAILS_PER_DAY = process.env.MAX_MAILS_PER_DAY || 1500;
 Promise.promisifyAll(redis.RedisClient.prototype);
 Promise.promisifyAll(redis.Multi.prototype);
 const redisClient = redis.createClient();
@@ -17,16 +38,16 @@ const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
         type: 'OAuth2',
-        user: config.GMAIL_USER,
-        clientId: config.CLIENT_ID,
-        clientSecret: config.CLIENT_SECRET,
-        refreshToken: config.REFRESH_TOKEN,
-        accessToken: config.ACCESS_TOKEN,
+        user: config[USER].gmailUser,
+        clientId: config[USER].clientId,
+        clientSecret: config[USER].clientSecret,
+        refreshToken: config[USER].refreshToken,
+        accessToken: config[USER].accessToken,
     },
 });
 
 const generateNewMailOpts = ({ email, name, title }) => ({
-    from: config.GMAIL_USER,
+    from: config[USER].gmailUser,
     to: email,
     subject: mail.genMailSubject(name, title),
     html: mail.genMailHtmlBody(name, title),
@@ -57,12 +78,12 @@ async function pickMessageFromWorkQueue () {
 
 async function mailsSentToday () {
     const today = moment().startOf('day');
-    return await redisClient.getAsync(`mails_sent_by_${ config.GMAIL_USER }_${ today }`);
+    return await redisClient.getAsync(`mails_sent_by_${ config[USER].gmailUser }_${ today }`);
 }
 
 function mailsSentTodayKeyName () {
     const today = moment().startOf('day');
-    return `mails_sent_by_${ config.GMAIL_USER }_${ today }`;
+    return `mails_sent_by_${ config[USER].gmailUser }_${ today }`;
 }
 
 async function reportMailSent () {

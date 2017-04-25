@@ -5,11 +5,20 @@ const debug = require('debug')('debug:redisLoader');
 const redis = require('redis');
 const config = require('../config/config');
 
+const TEST = process.env.TEST;
+const USER = process.env.USER;
+const CSV_FILENAME = TEST ? './assets/test.csv' : process.env.CSV_FILE;
+if (!TEST) {
+    console.log('Init work queue running in production mode')
+} else {
+    console.log('Init work queue Running in testmode')
+}
+
 Promise.promisifyAll(redis.RedisClient.prototype);
 Promise.promisifyAll(redis.Multi.prototype);
 const redisClient = redis.createClient();
-const WORK_QUEUE = `marie_work_queue_${ config.GMAIL_USER }`;
-
+const WORK_QUEUE = TEST ? 'mailer_test_work_queue' : `marie_work_queue_${ config[USER].gmailUser }`;
+debug(`Populating queue: ${ WORK_QUEUE } with ${ CSV_FILENAME }`)
 function asyncParse (fileName) {
     return new Promise((resolve, reject) => {
         parse(fileName, {
@@ -37,10 +46,10 @@ function capitalizePerson (person) {
 
 async function loadDbToRedis () {
     try {
-        const csvFile = await fs.readFileAsync(config.CSV_FILE);
+        const csvFile = await fs.readFileAsync(CSV_FILENAME);
         const output = await asyncParse(csvFile);
         debug(await redisClient.existsAsync(WORK_QUEUE));
-        output.slice(1300).forEach(async (person) => {
+        output.forEach(async (person) => {
             await redisClient.rpushAsync(WORK_QUEUE, JSON.stringify(capitalizePerson(person)));
             debug(`added ${ JSON.stringify(person) }`)
         });
