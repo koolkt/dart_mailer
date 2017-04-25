@@ -15,6 +15,16 @@ const mailConfs = {
     bastien: mailBastien,
 };
 const mail = mailConfs[USER];
+
+const WORK_QUEUE = TEST ? 'mailer_test_work_queue' : `marie_work_queue_${ config[USER].gmailUser }`;
+const PROCESSING_QUEUE = TEST ? 'mailer_test_processing_queue' : `marie_processing_queue_${ process.env.CLIENT_NAME || config[USER].gmailUser }`;
+const MAX_MAILS_PER_DAY = 1800; // TODO get max mails from env need to transform param to int
+
+debug(`Starting mailer with user: ${ USER }`)
+debug(`Working queue: ${ WORK_QUEUE }`)
+debug(`Processing queue: ${ PROCESSING_QUEUE }`)
+debug(`Max mails per day: ${ MAX_MAILS_PER_DAY }`)
+
 if (!TEST) {
     console.log('Running in production mode')
 }
@@ -27,9 +37,6 @@ if(!mail) {
     process.exit();
 }
 
-const WORK_QUEUE = TEST ? 'mailer_test_work_queue' : `marie_work_queue_${ config[USER].gmailUser }`;
-const PROCESSING_QUEUE = TEST ? 'mailer_test_processing_queue' : `marie_processing_queue_${ process.env.CLIENT_NAME || config[USER].gmailUser }`;
-const MAX_MAILS_PER_DAY = process.env.MAX_MAILS_PER_DAY || 1500;
 Promise.promisifyAll(redis.RedisClient.prototype);
 Promise.promisifyAll(redis.Multi.prototype);
 const redisClient = redis.createClient();
